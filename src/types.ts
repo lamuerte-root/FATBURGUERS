@@ -1,4 +1,28 @@
-export type CategoryId = 'all' | 'burgers' | 'doces' | 'acompanhamentos' | 'bebidas' | 'combos';
+export type CategoryId = 
+  | 'all' 
+  | 'classicos' 
+  | 'especiais' 
+  | 'combos' 
+  | 'sobremesas' 
+  | 'acompanhamentos' 
+  | 'bebidas';
+
+export interface ExtraAddon {
+  id: string;
+  name: string;
+  price: number;
+  category?: string;
+}
+
+export interface ProteinChoice {
+  name: 'Boi' | 'Frango' | 'Filé Mignon' | string;
+  price: number;
+}
+
+export interface VariationChoice {
+  name: string;
+  price: number;
+}
 
 export interface MenuItem {
   id: string;
@@ -13,6 +37,11 @@ export interface MenuItem {
   calories?: string;
   prepTime?: string;
   tags?: string[];
+  allowsProteins?: boolean;
+  proteins?: ProteinChoice[];
+  hasVariations?: boolean;
+  variations?: VariationChoice[];
+  allowsCustomization?: boolean;
   options?: {
     name: string;
     choices: { label: string; extraPrice?: number }[];
@@ -23,6 +52,10 @@ export interface CartItem {
   id: string;
   menuItem: MenuItem;
   quantity: number;
+  unitPrice: number;
+  selectedProtein?: ProteinChoice;
+  selectedVariation?: VariationChoice;
+  selectedAddons?: ExtraAddon[];
   selectedOptions?: Record<string, string>;
   notes?: string;
 }

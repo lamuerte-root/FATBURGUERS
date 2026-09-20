@@ -1,6 +1,7 @@
 import React from 'react';
 import { Phone, MapPin, Mail, Clock, Instagram, Facebook, Bike, ShieldCheck } from 'lucide-react';
-import logoImg from '../assets/images/fat_burguer_logo_1789944510522.jpg';
+import logoImg from '../assets/images/fat_burguer_logo_official.svg';
+import { STORE_INFO } from '../data/menuData';
 
 interface FooterProps {
   onNavigate: (sectionId: string) => void;
@@ -19,7 +20,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
             </div>
             <div>
               <h4 className="font-bold text-white text-sm">Entrega Rápida & Quentinha</h4>
-              <p className="text-xs text-zinc-500">Média de 30 a 40 minutos em caixas térmicas.</p>
+              <p className="text-xs text-zinc-500">Tempo médio de {STORE_INFO.tempoEstimado} em {STORE_INFO.cidade}.</p>
             </div>
           </div>
 
@@ -28,8 +29,8 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <ShieldCheck className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-sm">Ingredientes de Primeira</h4>
-              <p className="text-xs text-zinc-500">Carne 100% Angus e doces com cacau belga autêntico.</p>
+              <h4 className="font-bold text-white text-sm">Carnes & Doces Selecionados</h4>
+              <p className="text-xs text-zinc-500">Opções de Boi, Frango e Filé Mignon + doces artesanais.</p>
             </div>
           </div>
 
@@ -38,8 +39,8 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               <Clock className="w-6 h-6" />
             </div>
             <div>
-              <h4 className="font-bold text-white text-sm">Atendimento Noturno</h4>
-              <p className="text-xs text-zinc-500">Terça a Domingo: 18h00 às 23h30.</p>
+              <h4 className="font-bold text-white text-sm">Horário de Atendimento</h4>
+              <p className="text-xs text-zinc-500">{STORE_INFO.horario}</p>
             </div>
           </div>
         </div>
@@ -52,26 +53,26 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           {/* Col 1 & 2: Brand Info */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 rounded-2xl overflow-hidden p-0.5 bg-gradient-to-br from-amber-400 to-orange-600 shadow-md">
+              <div className="w-14 h-14 rounded-2xl flex items-center justify-center p-1 bg-gradient-to-b from-white/10 to-white/5 border border-white/10 shadow-md">
                 <img
                   src={logoImg}
-                  alt="FATBURGUERS"
-                  className="w-full h-full object-cover rounded-xl bg-zinc-950"
+                  alt="FATBURGUERS Logo Real Oficial"
+                  className="w-full h-full object-contain filter drop-shadow-md"
                   referrerPolicy="no-referrer"
                 />
               </div>
               <div>
                 <span className="font-display text-2xl font-black text-white tracking-wider">
-                  FATBURGUERS
+                  {STORE_INFO.nome}
                 </span>
                 <p className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">
-                  Hamburgueria & Doces Artesanais
+                  {STORE_INFO.slogan}
                 </p>
               </div>
             </div>
 
             <p className="text-xs text-zinc-400 leading-relaxed max-w-sm">
-              Especialistas em saciar sua fome com hambúrgueres artesanais suculentos, batatas ultra crocantes e as sobremesas mais generosas e saborosas que você já conheceu.
+              O autêntico sabor de Laje do Muriaé: lanches clássicos suculentos com Boi, Frango ou Filé Mignon, hambúrgueres especiais da casa, batatas crocantes e sobremesas deliciosas!
             </p>
 
             {/* Social Icons */}
@@ -95,7 +96,7 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                 <Facebook className="w-4 h-4" />
               </a>
               <a
-                href="https://wa.me/5511999999999"
+                href={`https://wa.me/${STORE_INFO.whatsapp}`}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-9 h-9 rounded-xl bg-zinc-900 border border-zinc-800 hover:border-amber-500 hover:text-amber-400 text-zinc-300 flex items-center justify-center transition-all"
@@ -109,15 +110,15 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           {/* Col 3: Quick Links */}
           <div className="space-y-3">
             <h4 className="font-bold text-white text-sm uppercase tracking-wider">
-              Navegação Rápida
+              Categorias
             </h4>
             <ul className="space-y-2 text-xs">
               <li>
                 <button
-                  onClick={() => onNavigate('hero')}
+                  onClick={() => onNavigate('menu')}
                   className="hover:text-amber-400 transition-colors"
                 >
-                  Início
+                  Clássicos (Boi/Frango/Filé)
                 </button>
               </li>
               <li>
@@ -125,15 +126,15 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
                   onClick={() => onNavigate('menu')}
                   className="hover:text-amber-400 transition-colors"
                 >
-                  Cardápio Completo
+                  Especiais da Casa
                 </button>
               </li>
               <li>
                 <button
-                  onClick={() => onNavigate('bestsellers')}
+                  onClick={() => onNavigate('menu')}
                   className="hover:text-amber-400 transition-colors"
                 >
-                  Os Mais Vendidos
+                  Combos Fat
                 </button>
               </li>
               <li>
@@ -146,18 +147,18 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
               </li>
               <li>
                 <button
-                  onClick={() => onNavigate('offers')}
+                  onClick={() => onNavigate('menu')}
                   className="hover:text-amber-400 transition-colors"
                 >
-                  Cupom 20% OFF
+                  Acompanhamentos & Batatas
                 </button>
               </li>
               <li>
                 <button
-                  onClick={() => onNavigate('about')}
+                  onClick={() => onNavigate('menu')}
                   className="hover:text-amber-400 transition-colors"
                 >
-                  Quem Somos
+                  Bebidas Geladas
                 </button>
               </li>
             </ul>
@@ -166,65 +167,54 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
           {/* Col 4: Customer Care & Hours */}
           <div className="space-y-3">
             <h4 className="font-bold text-white text-sm uppercase tracking-wider">
-              Horário & Delivery
+              Funcionamento
             </h4>
             <div className="space-y-2 text-xs">
               <div>
                 <span className="text-zinc-200 font-semibold block">Terça a Domingo:</span>
-                <span className="text-zinc-500">18:00 às 23:30</span>
+                <span className="text-zinc-400">{STORE_INFO.horario}</span>
               </div>
               <div>
-                <span className="text-zinc-200 font-semibold block">Sexta e Sábado:</span>
-                <span className="text-zinc-500">18:00 às 00:30</span>
+                <span className="text-zinc-200 font-semibold block">Entrega Delivery:</span>
+                <span className="text-zinc-400">{STORE_INFO.tempoEstimado}</span>
               </div>
               <div>
                 <span className="text-zinc-200 font-semibold block">Segunda-feira:</span>
-                <span className="text-rose-400/90 font-medium">Fechado para descanso da equipe</span>
+                <span className="text-amber-400 font-medium">Fechado</span>
               </div>
             </div>
           </div>
 
-          {/* Col 5: Contact & Download App */}
+          {/* Col 5: Contact */}
           <div className="space-y-3">
             <h4 className="font-bold text-white text-sm uppercase tracking-wider">
-              Fale Conosco
+              Localização & Contato
             </h4>
             <div className="space-y-2.5 text-xs">
               <div className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                <span>Rua Gastronômica, 1200 - Centro, São Paulo - SP</span>
+                <span>{STORE_INFO.endereco}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>(11) 99999-9999</span>
+                <span>{STORE_INFO.whatsappFormatted}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-amber-400 shrink-0" />
-                <span>contato@fatburguers.com.br</span>
+                <span>fatburguersdelivery@gmail.com</span>
               </div>
             </div>
 
-            {/* App download badges matching reference layout */}
-            <div className="pt-2 space-y-1.5">
-              <span className="text-[11px] font-bold text-zinc-300 block">
-                Peça também pelo App:
-              </span>
-              <div className="flex flex-col gap-2">
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300">
-                  <span>🍏</span>
-                  <div>
-                    <span className="text-[8px] text-zinc-500 block leading-none">Download on the</span>
-                    <span className="font-bold text-white">App Store</span>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl bg-zinc-900 border border-zinc-800 text-[11px] text-zinc-300">
-                  <span>🤖</span>
-                  <div>
-                    <span className="text-[8px] text-zinc-500 block leading-none">Disponível no</span>
-                    <span className="font-bold text-white">Google Play</span>
-                  </div>
-                </div>
-              </div>
+            <div className="pt-2">
+              <a
+                href={`https://wa.me/${STORE_INFO.whatsapp}?text=Ol%C3%A1%2C%20gostaria%20de%20fazer%20um%20pedido%20na%20FatBurguers!`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-md transition-colors"
+              >
+                <Phone className="w-3.5 h-3.5" />
+                <span>Pedir no WhatsApp</span>
+              </a>
             </div>
 
           </div>
@@ -233,13 +223,13 @@ export const Footer: React.FC<FooterProps> = ({ onNavigate }) => {
 
         {/* Bottom copyright row */}
         <div className="mt-12 pt-6 border-t border-zinc-900 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-zinc-500">
-          <p>© 2026 FATBURGUERS Delivery. Todos os direitos reservados.</p>
+          <p>© 2026 FAT BURGUERS. Todos os direitos reservados. {STORE_INFO.cidade}.</p>
           <div className="flex items-center gap-4">
-            <span className="text-zinc-600">Hamburgueria & Doces Artesanais</span>
+            <span className="text-zinc-600">Hamburgueria & Doceria Oficial</span>
             <span>•</span>
             <span className="text-emerald-500 flex items-center gap-1 font-medium">
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-              Sistema de Pedidos Online 100% Operacional
+              Cardápio Completo Sincronizado
             </span>
           </div>
         </div>

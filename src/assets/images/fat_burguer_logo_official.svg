@@ -1,0 +1,225 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <defs>
+    <!-- Drop Shadows -->
+    <filter id="drop-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="6" flood-color="#000000" flood-opacity="0.35"/>
+    </filter>
+    <filter id="light-shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000000" flood-opacity="0.25"/>
+    </filter>
+    
+    <!-- Spatula Gradients -->
+    <linearGradient id="spatula-handle" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#b91c1c"/>
+      <stop offset="40%" stop-color="#ef4444"/>
+      <stop offset="70%" stop-color="#dc2626"/>
+      <stop offset="100%" stop-color="#7f1d1d"/>
+    </linearGradient>
+    
+    <linearGradient id="spatula-head" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#f87171"/>
+      <stop offset="50%" stop-color="#dc2626"/>
+      <stop offset="100%" stop-color="#991b1b"/>
+    </linearGradient>
+
+    <!-- Bun Gradients -->
+    <radialGradient id="top-bun" cx="50%" cy="30%" r="60%" fx="50%" fy="20%">
+      <stop offset="0%" stop-color="#fcd34d"/>
+      <stop offset="35%" stop-color="#f59e0b"/>
+      <stop offset="80%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#b45309"/>
+    </radialGradient>
+    
+    <linearGradient id="bottom-bun" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f59e0b"/>
+      <stop offset="50%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+
+    <!-- Patty Gradient -->
+    <linearGradient id="patty-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#b91c1c"/>
+      <stop offset="25%" stop-color="#991b1b"/>
+      <stop offset="75%" stop-color="#7f1d1d"/>
+      <stop offset="100%" stop-color="#450a0a"/>
+    </linearGradient>
+
+    <!-- Cheese Gradient -->
+    <linearGradient id="cheese-grad" x1="0%" y1="0%" x2="50%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="70%" stop-color="#fde047"/>
+      <stop offset="100%" stop-color="#eab308"/>
+    </linearGradient>
+
+    <!-- Sauce Gradient -->
+    <linearGradient id="sauce-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fef3c7"/>
+      <stop offset="60%" stop-color="#fde68a"/>
+      <stop offset="100%" stop-color="#d97706"/>
+    </linearGradient>
+
+    <!-- 3D Letter Gradients -->
+    <linearGradient id="letter-face" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb"/>
+      <stop offset="100%" stop-color="#fde68a"/>
+    </linearGradient>
+    
+    <linearGradient id="letter-side" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#d97706"/>
+      <stop offset="100%" stop-color="#92400e"/>
+    </linearGradient>
+    
+    <linearGradient id="delivery-grad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#fb923c"/>
+      <stop offset="50%" stop-color="#f97316"/>
+      <stop offset="100%" stop-color="#c2410c"/>
+    </linearGradient>
+  </defs>
+
+  <!-- BACKGROUND (Transparent as requested, group wrapper) -->
+  <g id="logo-root" filter="url(#drop-shadow)">
+
+    <!-- ==================== SPATULAS (Behind Burger) ==================== -->
+    <g id="spatulas">
+      <!-- Left Spatula -->
+      <g transform="translate(180, 200) rotate(-35)">
+        <rect x="-12" y="-140" width="24" height="150" rx="12" fill="url(#spatula-handle)"/>
+        <!-- Hole in handle -->
+        <circle cx="0" cy="-115" r="4" fill="#7f1d1d" opacity="0.6"/>
+        <!-- Metal bolster/neck -->
+        <rect x="-10" y="10" width="20" height="25" rx="4" fill="#dc2626"/>
+        <!-- Spatula Head -->
+        <path d="M-30,35 L30,35 L24,110 C24,118 18,124 10,124 L-10,124 C-18,124 -24,118 -24,110 Z" fill="url(#spatula-head)" stroke="#991b1b" stroke-width="2"/>
+        <!-- Slots -->
+        <rect x="-18" y="50" width="6" height="50" rx="3" fill="#7f1d1d" opacity="0.7"/>
+        <rect x="-3" y="50" width="6" height="50" rx="3" fill="#7f1d1d" opacity="0.7"/>
+        <rect x="12" y="50" width="6" height="50" rx="3" fill="#7f1d1d" opacity="0.7"/>
+        <!-- Highlight -->
+        <path d="M-8,-135 L8,-135" stroke="#fca5a5" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+      </g>
+
+      <!-- Right Spatula -->
+      <g transform="translate(320, 200) rotate(35)">
+        <rect x="-12" y="-140" width="24" height="150" rx="12" fill="url(#spatula-handle)"/>
+        <circle cx="0" cy="-115" r="4" fill="#7f1d1d" opacity="0.6"/>
+        <rect x="-10" y="10" width="20" height="25" rx="4" fill="#dc2626"/>
+        <path d="M-30,35 L30,35 L24,110 C24,118 18,124 10,124 L-10,124 C-18,124 -24,118 -24,110 Z" fill="url(#spatula-head)" stroke="#991b1b" stroke-width="2"/>
+        <rect x="-18" y="50" width="6" height="50" rx="3" fill="#7f1d1d" opacity="0.7"/>
+        <rect x="-3" y="50" width="6" height="50" rx="3" fill="#7f1d1d" opacity="0.7"/>
+        <rect x="12" y="50" width="6" height="50" rx="3" fill="#7f1d1d" opacity="0.7"/>
+        <path d="M-8,-135 L8,-135" stroke="#fca5a5" stroke-width="3" stroke-linecap="round" opacity="0.8"/>
+      </g>
+    </g>
+
+    <!-- ==================== TOP TEXT 'FAT' ==================== -->
+    <g id="text-fat" transform="translate(250, 105)">
+      <!-- Arched 3D Text Effect using stacked paths / individual transformed letters -->
+      <!-- We use precise coordinates & styling for 3D Clay look -->
+      
+      <!-- Letter F -->
+      <g transform="translate(-95, -15) rotate(-12)">
+        <!-- Shadow/Extrusion -->
+        <text x="0" y="0" font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="76" fill="url(#letter-side)" text-anchor="middle" transform="translate(0, 6)">F</text>
+        <!-- Main Face -->
+        <text x="0" y="0" font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="76" fill="url(#letter-face)" stroke="#b45309" stroke-width="2" text-anchor="middle">F</text>
+      </g>
+
+      <!-- Letter A -->
+      <g transform="translate(-10, -25) rotate(0)">
+        <text x="0" y="0" font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="76" fill="url(#letter-side)" text-anchor="middle" transform="translate(0, 6)">A</text>
+        <text x="0" y="0" font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="76" fill="url(#letter-face)" stroke="#b45309" stroke-width="2" text-anchor="middle">A</text>
+      </g>
+
+      <!-- Letter T -->
+      <g transform="translate(80, -15) rotate(12)">
+        <text x="0" y="0" font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="76" fill="url(#letter-side)" text-anchor="middle" transform="translate(0, 6)">T</text>
+        <text x="0" y="0" font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="76" fill="url(#letter-face)" stroke="#b45309" stroke-width="2" text-anchor="middle">T</text>
+      </g>
+    </g>
+
+
+    <!-- ==================== THE 3D BURGER ==================== -->
+    <g id="burger" filter="url(#light-shadow)">
+      
+      <!-- Bottom Bun -->
+      <g id="bun-bottom" transform="translate(250, 335)">
+        <path d="M-120,0 C-120,40 -90,50 0,50 C90,50 120,40 120,0 C120,-10 100,-15 0,-15 C-100,-15 -120,-10 -120,0 Z" fill="url(#bottom-bun)" stroke="#78350f" stroke-width="3"/>
+        <!-- Bottom Bun Highlight -->
+        <ellipse cx="0" cy="20" rx="70" ry="12" fill="#fcd34d" opacity="0.4"/>
+      </g>
+
+      <!-- Patty -->
+      <g id="patty" transform="translate(250, 305)">
+        <rect x="-135" y="-18" width="270" height="42" rx="20" fill="url(#patty-grad)" stroke="#450a0a" stroke-width="3"/>
+        <!-- Grill marks / texture highlights -->
+        <path d="M-90,-10 C-70,-5 -70,10 -90,15" stroke="#7f1d1d" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.6"/>
+        <path d="M-30,-12 C-10,-7 -10,8 -30,13" stroke="#7f1d1d" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.6"/>
+        <path d="M30,-10 C50,-5 50,10 30,15" stroke="#7f1d1d" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.6"/>
+        <path d="M90,-12 C110,-7 110,8 90,13" stroke="#7f1d1d" stroke-width="6" stroke-linecap="round" fill="none" opacity="0.6"/>
+        <ellipse cx="0" cy="-8" rx="100" ry="6" fill="#f87171" opacity="0.2"/>
+      </g>
+
+      <!-- Melted Cheese -->
+      <g id="cheese" transform="translate(250, 275)">
+        <path d="M-130,-10 L130,-10 L140,15 L60,18 L0,45 L-60,18 L-140,15 Z" fill="url(#cheese-grad)" stroke="#ca8a04" stroke-width="3" stroke-linejoin="round"/>
+        <!-- Cheese Gloss -->
+        <path d="M-90,-2 L-40,8" stroke="#fef08a" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+      </g>
+
+      <!-- Sauce / Mayo Ribbon -->
+      <g id="sauce" transform="translate(250, 260)">
+        <path d="M-135,-5 C-110,12 -80,12 -55,-5 C-30,12 0,12 25,-5 C50,12 80,12 105,-5 C120,-12 135,-5 135,-5 C135,15 110,25 0,25 C-110,25 -135,15 -135,-5 Z" fill="url(#sauce-grad)" stroke="#b45309" stroke-width="2"/>
+      </g>
+
+      <!-- Top Bun -->
+      <g id="bun-top" transform="translate(250, 220)">
+        <!-- Main Dome -->
+        <path d="M-135,25 C-135,-55 -75,-75 0,-75 C75,-75 135,-55 135,25 C135,45 115,50 0,50 C-115,50 -135,45 -135,25 Z" fill="url(#top-bun)" stroke="#b45309" stroke-width="4"/>
+        
+        <!-- Specular Highlight for glossy look -->
+        <ellipse cx="-35" cy="-35" rx="50" ry="22" transform="rotate(-15 -35 -35)" fill="#fef3c7" opacity="0.5"/>
+
+        <!-- Sesame Seeds (Dark brown clay oval seeds as in reference) -->
+        <g id="sesame-seeds" fill="#422006" stroke="#291304" stroke-width="0.5">
+          <ellipse cx="-55" cy="-45" rx="5" ry="3" transform="rotate(25 -55 -45)"/>
+          <ellipse cx="-75" cy="-20" rx="5" ry="3" transform="rotate(-15 -75 -20)"/>
+          <ellipse cx="-30" cy="-60" rx="5" ry="3" transform="rotate(45 -30 -60)"/>
+          <ellipse cx="15" cy="-65" rx="5" ry="3" transform="rotate(-30 15 -65)"/>
+          <ellipse cx="45" cy="-45" rx="5" ry="3" transform="rotate(10 45 -45)"/>
+          <ellipse cx="75" cy="-25" rx="5" ry="3" transform="rotate(35 75 -25)"/>
+          <ellipse cx="-15" cy="-30" rx="5" ry="3" transform="rotate(-40 -15 -30)"/>
+          <ellipse cx="30" cy="-20" rx="5" ry="3" transform="rotate(20 30 -20)"/>
+          <ellipse cx="-50" cy="0" rx="5" ry="3" transform="rotate(60 -50 0)"/>
+          <ellipse cx="0" cy="-5" rx="5" ry="3" transform="rotate(-10 0 -5)"/>
+          <ellipse cx="55" cy="5" rx="5" ry="3" transform="rotate(-25 55 5)"/>
+          <ellipse cx="-90" cy="10" rx="5" ry="3" transform="rotate(15 -90 10)"/>
+          <ellipse cx="95" cy="10" rx="5" ry="3" transform="rotate(-5 95 10)"/>
+        </g>
+      </g>
+    </g>
+
+
+    <!-- ==================== BOTTOM TEXT 'BURGUERS' ==================== -->
+    <g id="text-burguers" transform="translate(250, 420)">
+      <!-- 3D Extruded Text effect -->
+      <!-- Shadow / Extrusion layer -->
+      <text x="0" y="6" font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="46" fill="url(#letter-side)" letter-spacing="3" text-anchor="middle">BURGUERS</text>
+      <!-- Main face layer -->
+      <text x="0" y="0" font-family="'Arial Black', Impact, sans-serif" font-weight="900" font-size="46" fill="url(#letter-face)" stroke="#b45309" stroke-width="1.5" letter-spacing="3" text-anchor="middle">BURGUERS</text>
+    </g>
+
+
+    <!-- ==================== SUBTITLE '•• DELIVERY ••' ==================== -->
+    <g id="text-delivery" transform="translate(250, 458)">
+      <!-- Two small red dots on the left -->
+      <circle cx="-92" cy="-5" r="3.5" fill="#dc2626"/>
+      <circle cx="-80" cy="-5" r="3.5" fill="#dc2626"/>
+      <!-- DELIVERY text in orange-red -->
+      <text x="0" y="0" font-family="'Arial Black', Arial, sans-serif" font-weight="900" font-size="20" fill="url(#delivery-grad)" letter-spacing="4" text-anchor="middle">DELIVERY</text>
+      <!-- Two small red dots on the right -->
+      <circle cx="80" cy="-5" r="3.5" fill="#dc2626"/>
+      <circle cx="92" cy="-5" r="3.5" fill="#dc2626"/>
+    </g>
+
+  </g>
+</svg>

@@ -18,61 +18,69 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
     badge?: string;
   }[] = [
     {
-      id: 'burgers',
+      id: 'classicos',
       icon: '🍔',
-      title: 'BURGERS',
-      subtitle: 'Suculentos & Artesanais',
+      title: 'CLÁSSICOS',
+      subtitle: 'Boi, Frango & Filé Mignon',
+      badge: 'ARTESANAL',
     },
     {
-      id: 'doces',
+      id: 'especiais',
+      icon: '👑',
+      title: 'ESPECIAIS',
+      subtitle: 'Da Casa, Burguer Fat & Tonzada',
+      badge: 'FAVORITOS',
+    },
+    {
+      id: 'combos',
+      icon: '🔥',
+      title: 'COMBOS FAT',
+      subtitle: 'Com Lanche + Batata + Refri',
+      badge: 'ECONOMIZE',
+    },
+    {
+      id: 'sobremesas',
       icon: '🍰',
-      title: 'DOCES & TAÇAS',
-      subtitle: 'Brownies, Shakes & Churros',
-      badge: 'DESTAQUE',
+      title: 'DOCES & SOBREMESAS',
+      subtitle: 'Copos, Vulcão, Tortas & Potes',
+      badge: 'DOCERIA',
     },
     {
       id: 'acompanhamentos',
       icon: '🍟',
-      title: 'BATATAS & PETISCOS',
-      subtitle: 'Crocantes & Douradas',
+      title: 'ACOMPANHAMENTOS',
+      subtitle: 'Batatas, Churros & Mini Salgados',
     },
     {
       id: 'bebidas',
       icon: '🥤',
-      title: 'BEBIDAS',
-      subtitle: 'Geladas & Refrescantes',
-    },
-    {
-      id: 'combos',
-      icon: '🍗',
-      title: 'COMBOS FAT',
-      subtitle: 'Com Super Desconto',
-      badge: 'ECONOMIZE',
+      title: 'BEBIDAS GELADAS',
+      subtitle: '2L, 1L, Latas, H2O & Sucos',
     },
   ];
 
   return (
     <div className="relative -mt-8 z-20 max-w-6xl mx-auto px-4 sm:px-6">
-      {/* Floating White/Light Container matching the reference design */}
-      <div className="bg-white rounded-3xl p-3 sm:p-4 shadow-2xl shadow-black/60 border border-zinc-200">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-3">
+      {/* Floating Light/Dark Container with official aesthetic */}
+      <div className="bg-zinc-900/95 backdrop-blur-xl rounded-3xl p-3 sm:p-4 shadow-2xl shadow-black/80 border border-zinc-800">
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2 sm:gap-2.5">
           {categories.map((cat) => {
             const isActive = activeCategory === cat.id;
             return (
               <button
                 key={cat.id}
                 onClick={() => onSelectCategory(cat.id)}
-                className={`relative flex flex-col items-center justify-center p-3 sm:p-4 rounded-2xl transition-all duration-200 text-center group ${
+                className={`relative flex flex-col items-center justify-center p-3 sm:p-3.5 rounded-2xl transition-all duration-200 text-center group ${
                   isActive
-                    ? 'bg-amber-500 text-zinc-950 shadow-md shadow-amber-500/30 scale-[1.02]'
-                    : 'bg-zinc-50 hover:bg-amber-50/80 text-zinc-800'
+                    ? 'bg-amber-500 text-zinc-950 shadow-lg shadow-amber-500/25 scale-[1.03] ring-2 ring-amber-400'
+                    : 'bg-zinc-800/80 hover:bg-zinc-800 text-zinc-100 hover:border-amber-500/40 border border-zinc-700/50'
                 }`}
               >
                 {cat.badge && (
                   <span
-                    className={`absolute -top-2 px-2 py-0.5 rounded-full text-[9px] font-black tracking-wider uppercase shadow-sm ${
+                    className={`absolute -top-2.5 px-2 py-0.5 rounded-full text-[8.5px] font-black tracking-wider uppercase shadow-sm ${
                       isActive
-                        ? 'bg-zinc-950 text-amber-400'
+                        ? 'bg-zinc-950 text-amber-400 border border-zinc-800'
                         : 'bg-amber-500 text-zinc-950'
                     }`}
                   >
@@ -81,14 +89,14 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
                 )}
                 
                 {/* Large Emoji / Icon */}
-                <div className="text-3xl sm:text-4xl mb-1.5 transform group-hover:scale-110 transition-transform duration-200">
+                <div className="text-2xl sm:text-3xl mb-1 transform group-hover:scale-110 transition-transform duration-200">
                   {cat.icon}
                 </div>
 
                 {/* Category Title */}
                 <span
-                  className={`font-display text-base sm:text-lg tracking-wide uppercase font-black ${
-                    isActive ? 'text-zinc-950' : 'text-zinc-900'
+                  className={`font-display text-xs sm:text-sm tracking-wide uppercase font-black ${
+                    isActive ? 'text-zinc-950' : 'text-zinc-100'
                   }`}
                 >
                   {cat.title}
@@ -96,8 +104,8 @@ export const CategoryBar: React.FC<CategoryBarProps> = ({
 
                 {/* Subtitle */}
                 <span
-                  className={`text-[11px] leading-tight font-medium ${
-                    isActive ? 'text-zinc-900/90 font-semibold' : 'text-zinc-500'
+                  className={`text-[10px] leading-tight font-medium line-clamp-1 ${
+                    isActive ? 'text-zinc-950/80 font-semibold' : 'text-zinc-400'
                   }`}
                 >
                   {cat.subtitle}

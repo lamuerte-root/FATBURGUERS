@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { X, Trash2, Plus, Minus, Bike, Store, Sparkles, Check, Send, ShoppingBag } from 'lucide-react';
+import { X, Trash2, Plus, Minus, Bike, Store, Sparkles, Send, ShoppingBag } from 'lucide-react';
 import { CartItem } from '../types';
+import { STORE_INFO } from '../data/menuData';
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -21,7 +22,6 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
   onUpdateQuantity,
   onRemoveItem,
   onApplyCoupon,
-  onClearCart,
 }) => {
   const [deliveryType, setDeliveryType] = useState<'delivery' | 'takeout'>('delivery');
   const [couponInput, setCouponInput] = useState(appliedCoupon);
@@ -36,24 +36,16 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
 
   if (!isOpen) return null;
 
-  // Calculate totals
+  // Calculate totals accurately using item.unitPrice
   const subtotal = items.reduce((acc, item) => {
-    let itemPrice = item.menuItem.price;
-    // Add extra price from options
-    if (item.selectedOptions && item.menuItem.options) {
-      item.menuItem.options.forEach((opt) => {
-        const choiceLabel = item.selectedOptions?.[opt.name];
-        const match = opt.choices.find((c) => c.label === choiceLabel);
-        if (match?.extraPrice) itemPrice += match.extraPrice;
-      });
-    }
+    const itemPrice = item.unitPrice || item.menuItem.price;
     return acc + itemPrice * item.quantity;
   }, 0);
 
   const isCouponValid = appliedCoupon.toUpperCase() === 'FAT20';
   const discountAmount = isCouponValid ? subtotal * 0.2 : 0;
   
-  const deliveryFee = deliveryType === 'takeout' || subtotal >= 50 ? 0 : 6.90;
+  const deliveryFee = deliveryType === 'takeout' || subtotal >= 60 ? 0 : 5.00;
   const grandTotal = Math.max(0, subtotal - discountAmount + deliveryFee);
 
   const handleApplyCoupon = (e: React.FormEvent) => {
@@ -72,39 +64,52 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
       return;
     }
     if (deliveryType === 'delivery' && !address.trim()) {
-      alert('Por favor, informe o endereço de entrega completo.');
+      alert('Por favor, informe o endereço de entrega completo com bairro e ponto de referência.');
       return;
     }
 
-    let message = `🍔 *NOVO PEDIDO - FATBURGUERS* 🍔\n`;
+    let message = `🍔 *NOVO PEDIDO - ${STORE_INFO.nome}* 🍔\n`;
     message += `---------------------------------\n`;
     message += `👤 *Cliente:* ${customerName}\n`;
     if (customerPhone) message += `📞 *WhatsApp:* ${customerPhone}\n`;
     message += `🛵 *Tipo:* ${deliveryType === 'delivery' ? 'Entrega Delivery' : 'Retirada no Balcão'}\n`;
     if (deliveryType === 'delivery') {
-      message += `📍 *Endereço:* ${address}\n`;
+      message += `📍 *Endereço de Entrega:* ${address}\n`;
     }
     message += `\n📋 *ITENS DO PEDIDO:*\n`;
 
     items.forEach((item, index) => {
-      message += `${index + 1}. *${item.quantity}x ${item.menuItem.name}* (R$ ${item.menuItem.price.toFixed(2)})\n`;
+      const priceUnit = item.unitPrice || item.menuItem.price;
+      const totalItem = priceUnit * item.quantity;
+      message += `${index + 1}. *${item.quantity}x ${item.menuItem.name}* (R$ ${totalItem.toFixed(2).replace('.', ',')})\n`;
+      
+      if (item.selectedProtein) {
+        message += `   🥩 *Carne:* ${item.selectedProtein.name}\n`;
+      }
+      if (item.selectedVariation) {
+        message += `   🍰 *Opção:* ${item.selectedVariation.name}\n`;
+      }
+      if (item.selectedAddons && item.selectedAddons.length > 0) {
+        const addonsList = item.selectedAddons.map((a) => a.name).join(', ');
+        message += `   ➕ *Adicionais:* ${addonsList}\n`;
+      }
       if (item.selectedOptions && Object.keys(item.selectedOptions).length > 0) {
         Object.entries(item.selectedOptions).forEach(([k, v]) => {
           message += `   ↳ ${k}: ${v}\n`;
         });
       }
       if (item.notes) {
-        message += `   ↳ Obs: ${item.notes}\n`;
+        message += `   📝 *Obs:* ${item.notes}\n`;
       }
     });
 
-    message += `\n💰 *RESUMO FINANCEIRO:*\n`;
-    message += `Subtotal: R$ ${subtotal.toFixed(2)}\n`;
+    message += `\n💰 *RESUMO DO PEDIDO:*\n`;
+    message += `Subtotal: R$ ${subtotal.toFixed(2).replace('.', ',')}\n`;
     if (discountAmount > 0) {
-      message += `Desconto (${appliedCoupon}): -R$ ${discountAmount.toFixed(2)}\n`;
+      message += `Desconto (${appliedCoupon}): -R$ ${discountAmount.toFixed(2).replace('.', ',')}\n`;
     }
-    message += `Taxa de Entrega: ${deliveryFee === 0 ? 'GRÁTIS' : `R$ ${deliveryFee.toFixed(2)}`}\n`;
-    message += `*TOTAL A PAGAR: R$ ${grandTotal.toFixed(2)}*\n\n`;
+    message += `Taxa de Entrega: ${deliveryFee === 0 ? 'GRÁTIS' : `R$ ${deliveryFee.toFixed(2).replace('.', ',')}`}\n`;
+    message += `*TOTAL A PAGAR: R$ ${grandTotal.toFixed(2).replace('.', ',')}*\n\n`;
 
     message += `💳 *Forma de Pagamento:* ${
       paymentMethod === 'pix'
@@ -114,10 +119,10 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
         : `Dinheiro ${cashChange ? `(Troco para R$ ${cashChange})` : '(Sem troco)'}`
     }\n`;
     message += `---------------------------------\n`;
-    message += `Obrigado por escolher a FatBurguers! 🚀`;
+    message += `Obrigado por pedir na ${STORE_INFO.nome}! 🚀`;
 
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = `https://wa.me/5511999999999?text=${encodedMessage}`;
+    const whatsappUrl = `https://wa.me/${STORE_INFO.whatsapp}?text=${encodedMessage}`;
     window.open(whatsappUrl, '_blank');
   };
 
@@ -170,11 +175,11 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   Seu carrinho está vazio
                 </h4>
                 <p className="text-xs text-zinc-400 max-w-xs mx-auto">
-                  Dê uma olhada nos nossos deliciosos hambúrgueres e doces e monte seu pedido!
+                  Dê uma olhada nos nossos hambúrgueres e doces e monte seu pedido no capricho!
                 </p>
                 <button
                   onClick={onClose}
-                  className="px-5 py-2.5 rounded-xl font-bold text-xs bg-amber-500 text-zinc-950 hover:bg-amber-400"
+                  className="px-5 py-2.5 rounded-xl font-bold text-xs bg-amber-500 text-zinc-950 hover:bg-amber-400 shadow-lg shadow-amber-500/20"
                 >
                   Explorar Cardápio
                 </button>
@@ -183,72 +188,97 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
               <>
                 {/* Items List */}
                 <div className="space-y-3">
-                  {items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-3.5 flex gap-3 items-center"
-                    >
-                      <img
-                        src={item.menuItem.image}
-                        alt={item.menuItem.name}
-                        className="w-16 h-16 rounded-xl object-cover bg-zinc-950 shrink-0"
-                        referrerPolicy="no-referrer"
-                      />
+                  {items.map((item) => {
+                    const priceUnit = item.unitPrice || item.menuItem.price;
+                    return (
+                      <div
+                        key={item.id}
+                        className="bg-zinc-900/90 border border-zinc-800 rounded-2xl p-3.5 flex gap-3 items-start"
+                      >
+                        <img
+                          src={item.menuItem.image}
+                          alt={item.menuItem.name}
+                          className="w-16 h-16 rounded-xl object-cover bg-zinc-950 shrink-0 border border-zinc-800"
+                          referrerPolicy="no-referrer"
+                        />
 
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-start justify-between gap-1">
-                          <h4 className="font-bold text-white text-sm line-clamp-1">
-                            {item.menuItem.name}
-                          </h4>
-                          <button
-                            onClick={() => onRemoveItem(item.id)}
-                            className="text-zinc-500 hover:text-red-400 p-1 transition-colors"
-                            aria-label="Remover item"
-                          >
-                            <Trash2 className="w-4 h-4" />
-                          </button>
-                        </div>
-
-                        {item.selectedOptions && (
-                          <p className="text-[11px] text-amber-400/90 line-clamp-1">
-                            {Object.values(item.selectedOptions).join(' • ')}
-                          </p>
-                        )}
-                        {item.notes && (
-                          <p className="text-[10px] text-zinc-400 italic line-clamp-1">
-                            Obs: {item.notes}
-                          </p>
-                        )}
-
-                        <div className="flex items-center justify-between mt-2">
-                          <span className="font-display text-base font-black text-amber-400">
-                            R$ {(item.menuItem.price * item.quantity).toFixed(2).replace('.', ',')}
-                          </span>
-
-                          <div className="flex items-center border border-zinc-700/80 rounded-lg bg-zinc-950 px-1 py-0.5">
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-start justify-between gap-1">
+                            <h4 className="font-bold text-white text-sm line-clamp-1">
+                              {item.menuItem.name}
+                            </h4>
                             <button
-                              onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
-                              className="p-1 text-zinc-400 hover:text-white"
-                              aria-label="Diminuir quantidade"
+                              onClick={() => onRemoveItem(item.id)}
+                              className="text-zinc-500 hover:text-red-400 p-1 transition-colors"
+                              aria-label="Remover item"
                             >
-                              <Minus className="w-3 h-3" />
-                            </button>
-                            <span className="w-6 text-center text-xs font-bold text-white">
-                              {item.quantity}
-                            </span>
-                            <button
-                              onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
-                              className="p-1 text-zinc-400 hover:text-white"
-                              aria-label="Aumentar quantidade"
-                            >
-                              <Plus className="w-3 h-3" />
+                              <Trash2 className="w-4 h-4" />
                             </button>
                           </div>
-                        </div>
 
+                          {/* Selected Protein */}
+                          {item.selectedProtein && (
+                            <p className="text-[11px] font-semibold text-amber-400">
+                              🥩 Carne: {item.selectedProtein.name}
+                            </p>
+                          )}
+
+                          {/* Selected Variation */}
+                          {item.selectedVariation && (
+                            <p className="text-[11px] font-semibold text-amber-300">
+                              🍰 {item.selectedVariation.name}
+                            </p>
+                          )}
+
+                          {/* Selected Addons */}
+                          {item.selectedAddons && item.selectedAddons.length > 0 && (
+                            <p className="text-[10px] text-zinc-300">
+                              ➕ {item.selectedAddons.map((a) => a.name).join(', ')}
+                            </p>
+                          )}
+
+                          {item.selectedOptions && Object.keys(item.selectedOptions).length > 0 && (
+                            <p className="text-[10px] text-zinc-400">
+                              {Object.values(item.selectedOptions).join(' • ')}
+                            </p>
+                          )}
+
+                          {item.notes && (
+                            <p className="text-[10px] text-zinc-400 italic line-clamp-1">
+                              Obs: {item.notes}
+                            </p>
+                          )}
+
+                          <div className="flex items-center justify-between mt-2 pt-1 border-t border-zinc-800/80">
+                            <span className="font-display text-base font-black text-amber-400">
+                              R$ {(priceUnit * item.quantity).toFixed(2).replace('.', ',')}
+                            </span>
+
+                            <div className="flex items-center border border-zinc-700/80 rounded-lg bg-zinc-950 px-1 py-0.5">
+                              <button
+                                onClick={() => onUpdateQuantity(item.id, item.quantity - 1)}
+                                className="p-1 text-zinc-400 hover:text-white"
+                                aria-label="Diminuir quantidade"
+                              >
+                                <Minus className="w-3 h-3" />
+                              </button>
+                              <span className="w-6 text-center text-xs font-bold text-white">
+                                {item.quantity}
+                              </span>
+                              <button
+                                onClick={() => onUpdateQuantity(item.id, item.quantity + 1)}
+                                className="p-1 text-zinc-400 hover:text-white"
+                                aria-label="Aumentar quantidade"
+                              >
+                                <Plus className="w-3 h-3" />
+                              </button>
+                            </div>
+                          </div>
+
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 {/* Delivery Type Switcher */}
@@ -267,7 +297,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                       }`}
                     >
                       <Bike className="w-4 h-4" />
-                      <span>Delivery (30-40m)</span>
+                      <span>Delivery ({STORE_INFO.tempoEstimado})</span>
                     </button>
                     <button
                       type="button"
@@ -298,7 +328,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   />
                   <input
                     type="tel"
-                    placeholder="WhatsApp para contato (DDD + Número)"
+                    placeholder="WhatsApp para contato (DDD + Número) *"
                     value={customerPhone}
                     onChange={(e) => setCustomerPhone(e.target.value)}
                     className="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
@@ -306,7 +336,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                   {deliveryType === 'delivery' && (
                     <input
                       type="text"
-                      placeholder="Endereço de entrega (Rua, Número, Bairro, Apto) *"
+                      placeholder="Endereço de entrega (Rua, Número, Bairro, Referência) *"
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       className="w-full p-2.5 bg-zinc-900 border border-zinc-800 rounded-xl text-xs text-white placeholder-zinc-500 focus:outline-none focus:border-amber-500"
@@ -436,11 +466,6 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                     )}
                   </span>
                 </div>
-                {subtotal < 50 && deliveryType === 'delivery' && (
-                  <p className="text-[10px] text-amber-400/80">
-                    💡 Dica: Adicione mais R$ {(50 - subtotal).toFixed(2).replace('.', ',')} e ganhe <strong>Entrega Grátis</strong>!
-                  </p>
-                )}
                 <div className="flex justify-between text-base font-bold text-white pt-2 border-t border-zinc-800">
                   <span>Total a Pagar:</span>
                   <span className="font-display text-2xl font-black text-amber-400">
@@ -456,7 +481,7 @@ export const CartDrawer: React.FC<CartDrawerProps> = ({
                 className="w-full flex items-center justify-center gap-2.5 py-4 rounded-xl font-extrabold text-sm bg-gradient-to-r from-emerald-500 to-green-600 hover:from-emerald-400 hover:to-green-500 text-zinc-950 shadow-lg shadow-emerald-500/20 active:scale-95 transition-all uppercase tracking-wide"
               >
                 <Send className="w-4 h-4 text-zinc-950" />
-                <span>Concluir Pedido via WhatsApp</span>
+                <span>Enviar Pedido pelo WhatsApp</span>
               </button>
             </div>
           )}

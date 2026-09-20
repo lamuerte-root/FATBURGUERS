@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowRight, Play, Flame, Award, ShieldCheck, Heart } from 'lucide-react';
 import heroBurgerImg from '../assets/images/fat_hero_burger_1789944526775.jpg';
+import logoImg from '../assets/images/fat_burguer_logo_official.svg';
 
 interface HeroProps {
   onOrderNow: () => void;
@@ -100,21 +101,15 @@ export const Hero: React.FC<HeroProps> = ({ onOrderNow, onExploreMenu }) => {
           {/* Right Column: Hero Food Composition & Circular Stamp */}
           <div className="lg:col-span-6 relative flex justify-center items-center">
             
-            {/* The circular gold stamp badge matching reference (100% FRESH & PREMIUM) */}
-            <div className="absolute -top-3 left-4 sm:left-8 md:left-12 z-20 w-24 h-24 sm:w-28 sm:h-28 rounded-full border-2 border-dashed border-amber-400/80 bg-zinc-950/90 backdrop-blur-md p-1.5 flex flex-col items-center justify-center text-center shadow-xl shadow-amber-500/10 rotate-[-12deg] group hover:rotate-0 transition-transform duration-300">
-              <div className="w-full h-full rounded-full border border-amber-500/40 flex flex-col items-center justify-center p-1">
-                <div className="flex text-amber-400 text-[10px] gap-0.5">
-                  ★ ★ ★
-                </div>
-                <span className="font-display text-base sm:text-lg font-black text-amber-400 leading-tight">
-                  100%
-                </span>
-                <span className="text-[9px] font-bold tracking-widest text-zinc-200 uppercase leading-tight">
-                  ARTESANAL
-                </span>
-                <span className="text-[8px] font-semibold text-amber-500 uppercase">
-                  & FRESCO
-                </span>
+            {/* The circular brand stamp badge with official logo */}
+            <div className="absolute -top-3 left-4 sm:left-8 md:left-12 z-20 w-24 h-24 sm:w-28 sm:h-28 rounded-full border-2 border-dashed border-amber-400/80 bg-zinc-950/95 backdrop-blur-md p-1.5 flex flex-col items-center justify-center text-center shadow-xl shadow-amber-500/20 rotate-[-12deg] group hover:rotate-0 transition-transform duration-300">
+              <div className="w-full h-full rounded-full border border-amber-500/40 flex flex-col items-center justify-center p-1.5 relative overflow-hidden bg-gradient-to-b from-zinc-900 to-black">
+                <img
+                  src={logoImg}
+                  alt="Selo FATBURGUERS Original"
+                  className="w-full h-full object-contain filter drop-shadow-md transform group-hover:scale-110 transition-transform duration-300"
+                  referrerPolicy="no-referrer"
+                />
               </div>
             </div>
 

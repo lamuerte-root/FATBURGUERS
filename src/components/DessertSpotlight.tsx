@@ -14,7 +14,7 @@ export const DessertSpotlight: React.FC<DessertSpotlightProps> = ({
   onAddToCart,
   onSelectItem,
 }) => {
-  const signatureDessert = dessertItems.find((d) => d.id === 'doce-brownie-fudge') || dessertItems[0];
+  const signatureDessert = dessertItems.find((d) => d.id === 'doce-copo-da-felicidade') || dessertItems[0];
   const otherDesserts = dessertItems.filter((d) => d.id !== signatureDessert?.id).slice(0, 3);
 
   return (
@@ -27,36 +27,35 @@ export const DessertSpotlight: React.FC<DessertSpotlightProps> = ({
         {/* Section Header */}
         <div className="text-center space-y-2 mb-14">
           <span className="font-script text-3xl sm:text-4xl text-amber-400 drop-shadow-sm block">
-            — Para Fechar com Chave de Ouro —
+            — Doceria & Sobremesas Artesanais —
           </span>
           <div className="flex items-center justify-center gap-4">
             <div className="h-[2px] w-12 sm:w-20 bg-amber-500/60" />
             <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-black tracking-wider text-white">
-              DOCES & SOBREMESAS ARTESANAIS
+              DOCES & SOBREMESAS FAT
             </h2>
             <div className="h-[2px] w-12 sm:w-20 bg-amber-500/60" />
           </div>
           <p className="text-zinc-400 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
-            Aqui na FATBURGUERS o doce não é apenas um detalhe: é uma das nossas grandes especialidades!
-            Receitas autorais com chocolate belga, sorvetes cremosos e muito sabor.
+            Aqui na FATBURGUERS os doces são feitos com muito carinho: Copos da Felicidade, Bolos Vulcão, Bolos de Pote e Tortas Geladas preparadas artesanalmente!
           </p>
         </div>
 
         {/* Feature Bento Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
           
-          {/* Main Hero Card: Signature Taça Brownie Fudge */}
+          {/* Main Hero Card: Signature Copo da Felicidade */}
           <div className="lg:col-span-7 bg-[#16161c] border border-amber-500/30 rounded-3xl p-6 sm:p-8 flex flex-col justify-between relative overflow-hidden shadow-2xl group hover:border-amber-500/60 transition-all duration-300">
             <div className="relative z-10 space-y-4">
               
               <div className="flex items-center justify-between">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black uppercase tracking-wider bg-amber-500 text-zinc-950">
                   <Sparkles className="w-3.5 h-3.5 fill-zinc-950" />
-                  Especialidade da Casa
+                  Sensação da Cidade
                 </span>
                 <span className="text-xs font-semibold text-zinc-400 flex items-center gap-1">
                   <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" />
-                  +1.200 pedidos este mês
+                  Mais de 1.000 pedidos
                 </span>
               </div>
 
@@ -65,7 +64,7 @@ export const DessertSpotlight: React.FC<DessertSpotlightProps> = ({
                   {signatureDessert?.name}
                 </h3>
                 <p className="text-zinc-300 text-sm sm:text-base mt-2 leading-relaxed max-w-xl">
-                  {signatureDessert?.description}
+                  {signatureDessert?.description} Vários sabores e tamanhos (300ml e 500ml) com Nutella, Ninho, Morango, Uva, Kinder Bueno e Kit Kat.
                 </p>
               </div>
 
@@ -82,7 +81,7 @@ export const DessertSpotlight: React.FC<DessertSpotlightProps> = ({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-zinc-950/80 via-transparent to-transparent pointer-events-none" />
                 <div className="absolute bottom-3 left-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-lg text-xs font-medium text-amber-300 border border-amber-500/30">
-                  🍫 Chocolate Belga 70% & Baunilha Bourbon
+                  🍓 Nutella, Leite Ninho, Morangos Frescos & Kinder
                 </div>
               </div>
 
@@ -91,7 +90,7 @@ export const DessertSpotlight: React.FC<DessertSpotlightProps> = ({
             {/* Bottom Row */}
             <div className="pt-6 mt-4 border-t border-zinc-800 flex items-center justify-between relative z-10">
               <div>
-                <span className="text-xs text-zinc-400 block">Valor Especial</span>
+                <span className="text-xs text-zinc-400 block">A partir de</span>
                 <span className="font-display text-3xl font-black text-amber-400">
                   R$ {signatureDessert?.price.toFixed(2).replace('.', ',')}
                 </span>
@@ -99,11 +98,11 @@ export const DessertSpotlight: React.FC<DessertSpotlightProps> = ({
 
               <button
                 id="btn-add-signature-dessert"
-                onClick={() => signatureDessert && onAddToCart(signatureDessert)}
+                onClick={() => signatureDessert && onSelectItem(signatureDessert)}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl font-black text-sm bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-zinc-950 shadow-lg shadow-amber-500/20 active:scale-95 transition-all"
               >
                 <Plus className="w-4 h-4 stroke-[3]" />
-                <span>Adicionar ao Pedido</span>
+                <span>Escolher Sabor</span>
               </button>
             </div>
 
@@ -150,11 +149,12 @@ export const DessertSpotlight: React.FC<DessertSpotlightProps> = ({
                       R$ {item.price.toFixed(2).replace('.', ',')}
                     </span>
                     <button
-                      onClick={() => onAddToCart(item)}
-                      aria-label={`Adicionar ${item.name}`}
-                      className="w-8 h-8 rounded-full bg-amber-500/20 hover:bg-amber-500 text-amber-400 hover:text-zinc-950 flex items-center justify-center transition-all"
+                      onClick={() => onSelectItem(item)}
+                      aria-label={`Personalizar ${item.name}`}
+                      className="px-3 py-1.5 rounded-lg bg-amber-500/20 hover:bg-amber-500 text-amber-400 hover:text-zinc-950 font-bold text-xs flex items-center gap-1 transition-all"
                     >
-                      <Plus className="w-4 h-4" />
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Ver</span>
                     </button>
                   </div>
                 </div>
@@ -168,8 +168,8 @@ export const DessertSpotlight: React.FC<DessertSpotlightProps> = ({
                 <Award className="w-5 h-5" />
               </div>
               <p className="text-xs text-zinc-300">
-                <strong className="text-amber-400 font-bold block">Dica do Chef:</strong>
-                O combo com <span className="text-white font-medium">Burger Artesanal + Sobremesa</span> tem desconto especial!
+                <strong className="text-amber-400 font-bold block">Entrega Rápida:</strong>
+                Doces embalados com todo o cuidado para chegarem perfeitos na sua casa!
               </p>
             </div>
 

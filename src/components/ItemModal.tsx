@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { X, Plus, Minus, Clock, Flame, ShoppingBag } from 'lucide-react';
-import { MenuItem } from '../types';
+import React, { useState, useEffect } from 'react';
+import { X, Plus, Minus, Clock, ShoppingBag, Check } from 'lucide-react';
+import { MenuItem, ProteinChoice, VariationChoice, ExtraAddon } from '../types';
+import { AVAILABLE_ADDONS } from '../data/menuData';
 
 interface ItemModalProps {
   item: MenuItem | null;
@@ -9,7 +10,11 @@ interface ItemModalProps {
     item: MenuItem,
     quantity: number,
     selectedOptions: Record<string, string>,
-    notes: string
+    notes: string,
+    selectedProtein?: ProteinChoice,
+    selectedVariation?: VariationChoice,
+    selectedAddons?: ExtraAddon[],
+    unitPrice?: number
   ) => void;
 }
 
@@ -21,6 +26,13 @@ export const ItemModal: React.FC<ItemModalProps> = ({
   if (!item) return null;
 
   const [quantity, setQuantity] = useState(1);
+  const [selectedProtein, setSelectedProtein] = useState<ProteinChoice | undefined>(() => {
+    return item.proteins && item.proteins.length > 0 ? item.proteins[0] : undefined;
+  });
+  const [selectedVariation, setSelectedVariation] = useState<VariationChoice | undefined>(() => {
+    return item.variations && item.variations.length > 0 ? item.variations[0] : undefined;
+  });
+  const [selectedAddons, setSelectedAddons] = useState<ExtraAddon[]>([]);
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
     const initial: Record<string, string> = {};
     item.options?.forEach((opt) => {
@@ -32,18 +44,58 @@ export const ItemModal: React.FC<ItemModalProps> = ({
   });
   const [notes, setNotes] = useState('');
 
+  // Reset when item changes
+  useEffect(() => {
+    if (item) {
+      setQuantity(1);
+      setSelectedProtein(item.proteins && item.proteins.length > 0 ? item.proteins[0] : undefined);
+      setSelectedVariation(item.variations && item.variations.length > 0 ? item.variations[0] : undefined);
+      setSelectedAddons([]);
+      setNotes('');
+      const initial: Record<string, string> = {};
+      item.options?.forEach((opt) => {
+        if (opt.choices.length > 0) {
+          initial[opt.name] = opt.choices[0].label;
+        }
+      });
+      setSelectedOptions(initial);
+    }
+  }, [item]);
+
+  // Compute base price from protein / variation / default price
+  let basePrice = item.price;
+  if (selectedProtein) {
+    basePrice = selectedProtein.price;
+  } else if (selectedVariation) {
+    basePrice = selectedVariation.price;
+  }
+
   // Calculate extra price from selected options
-  let extraTotal = 0;
+  let extraOptionsTotal = 0;
   item.options?.forEach((opt) => {
     const currentChoiceLabel = selectedOptions[opt.name];
     const match = opt.choices.find((c) => c.label === currentChoiceLabel);
     if (match && match.extraPrice) {
-      extraTotal += match.extraPrice;
+      extraOptionsTotal += match.extraPrice;
     }
   });
 
-  const unitPrice = item.price + extraTotal;
+  // Calculate addons total
+  const addonsTotal = selectedAddons.reduce((sum, a) => sum + a.price, 0);
+
+  const unitPrice = basePrice + extraOptionsTotal + addonsTotal;
   const totalPrice = unitPrice * quantity;
+
+  const toggleAddon = (addon: ExtraAddon) => {
+    setSelectedAddons((prev) => {
+      const exists = prev.some((a) => a.id === addon.id);
+      if (exists) {
+        return prev.filter((a) => a.id !== addon.id);
+      } else {
+        return [...prev, addon];
+      }
+    });
+  };
 
   const handleOptionChange = (optionName: string, choiceLabel: string) => {
     setSelectedOptions((prev) => ({
@@ -53,29 +105,41 @@ export const ItemModal: React.FC<ItemModalProps> = ({
   };
 
   const handleConfirm = () => {
-    onAddToCartWithOptions(item, quantity, selectedOptions, notes);
+    onAddToCartWithOptions(
+      item,
+      quantity,
+      selectedOptions,
+      notes,
+      selectedProtein,
+      selectedVariation,
+      selectedAddons,
+      unitPrice
+    );
     onClose();
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-in fade-in duration-200">
+    <div 
+      className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/85 backdrop-blur-md animate-in fade-in duration-200"
+      onClick={onClose}
+    >
       <div
-        className="relative w-full max-w-lg bg-[#121216] border border-zinc-700/80 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[90vh]"
+        className="relative w-full max-w-lg bg-[#121216] border border-zinc-700/80 rounded-3xl overflow-hidden shadow-2xl flex flex-col max-h-[92vh]"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Close button */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/60 text-zinc-300 hover:text-white hover:bg-black/80 flex items-center justify-center backdrop-blur-md transition-colors"
+          className="absolute top-4 right-4 z-20 w-9 h-9 rounded-full bg-black/70 text-zinc-300 hover:text-white hover:bg-black/90 flex items-center justify-center backdrop-blur-md transition-colors border border-white/10 shadow-lg"
           aria-label="Fechar modal"
         >
           <X className="w-5 h-5" />
         </button>
 
         {/* Scrollable container */}
-        <div className="overflow-y-auto p-6 space-y-6">
+        <div className="overflow-y-auto p-5 sm:p-6 space-y-6">
           {/* Item Image */}
-          <div className="relative aspect-[16/10] rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
+          <div className="relative aspect-[16/9] rounded-2xl overflow-hidden bg-zinc-900 border border-zinc-800">
             <img
               src={item.image}
               alt={item.name}
@@ -88,7 +152,7 @@ export const ItemModal: React.FC<ItemModalProps> = ({
               </span>
             )}
             {item.prepTime && (
-              <div className="absolute bottom-3 right-3 bg-black/70 backdrop-blur-sm text-zinc-200 text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1.5">
+              <div className="absolute bottom-3 right-3 bg-black/80 backdrop-blur-sm text-zinc-200 text-xs font-medium px-2.5 py-1 rounded-full flex items-center gap-1.5 border border-white/10">
                 <Clock className="w-3.5 h-3.5 text-amber-400" />
                 {item.prepTime}
               </div>
@@ -98,19 +162,138 @@ export const ItemModal: React.FC<ItemModalProps> = ({
           {/* Item Title & Price */}
           <div>
             <div className="flex items-baseline justify-between gap-2">
-              <h3 className="font-display text-2xl sm:text-3xl font-black text-white">
+              <h3 className="font-display text-2xl sm:text-3xl font-black text-white leading-tight">
                 {item.name}
               </h3>
               <span className="font-display text-2xl sm:text-3xl font-black text-amber-400 shrink-0">
                 R$ {unitPrice.toFixed(2).replace('.', ',')}
               </span>
             </div>
-            <p className="text-zinc-400 text-sm mt-2 leading-relaxed">
+            <p className="text-zinc-300 text-xs sm:text-sm mt-2 leading-relaxed">
               {item.description}
             </p>
           </div>
 
-          {/* Options if available */}
+          {/* 1. Protein Selection (Boi, Frango, Filé Mignon) */}
+          {item.proteins && item.proteins.length > 0 && (
+            <div className="space-y-3 pt-4 border-t border-zinc-800">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black uppercase tracking-wider text-amber-400">
+                  1. Escolha a Carne / Proteína (Obrigatório)
+                </span>
+                <span className="text-[10px] text-zinc-400">Selecione 1</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {item.proteins.map((p, idx) => {
+                  const isSelected = selectedProtein?.name === p.name;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setSelectedProtein(p)}
+                      className={`flex flex-col p-3 rounded-xl border text-left transition-all ${
+                        isSelected
+                          ? 'bg-amber-500/15 border-amber-500 text-white shadow-md shadow-amber-500/10'
+                          : 'bg-zinc-900/70 border-zinc-800 text-zinc-300 hover:border-zinc-700'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full mb-1">
+                        <span className="font-bold text-sm">{p.name}</span>
+                        {isSelected && <Check className="w-4 h-4 text-amber-400" />}
+                      </div>
+                      <span className="font-display text-base font-black text-amber-400">
+                        R$ {p.price.toFixed(2).replace('.', ',')}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* 2. Variations (Flavors / Sizes for doces, bolos, salgadinhos) */}
+          {item.variations && item.variations.length > 0 && (
+            <div className="space-y-3 pt-4 border-t border-zinc-800">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black uppercase tracking-wider text-amber-400">
+                  Opções / Sabores / Tamanhos
+                </span>
+                <span className="text-[10px] text-zinc-400">Selecione 1</span>
+              </div>
+              <div className="grid grid-cols-1 gap-2">
+                {item.variations.map((v, idx) => {
+                  const isSelected = selectedVariation?.name === v.name;
+                  return (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setSelectedVariation(v)}
+                      className={`flex items-center justify-between p-3 rounded-xl border text-left transition-all ${
+                        isSelected
+                          ? 'bg-amber-500/15 border-amber-500 text-white'
+                          : 'bg-zinc-900/70 border-zinc-800 text-zinc-300 hover:border-zinc-700'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2.5">
+                        <div className={`w-4 h-4 rounded-full border flex items-center justify-center ${
+                          isSelected ? 'border-amber-500 bg-amber-500 text-zinc-950' : 'border-zinc-600'
+                        }`}>
+                          {isSelected && <div className="w-1.5 h-1.5 rounded-full bg-zinc-950" />}
+                        </div>
+                        <span className="text-xs sm:text-sm font-semibold">{v.name}</span>
+                      </div>
+                      <span className="font-display text-base font-bold text-amber-400">
+                        R$ {v.price.toFixed(2).replace('.', ',')}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* 3. Adicionais & Extras (Cheddar, Catupiry, Bacon, Queijo, etc.) */}
+          {(item.allowsCustomization || item.category === 'classicos' || item.category === 'especiais') && (
+            <div className="space-y-3 pt-4 border-t border-zinc-800">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black uppercase tracking-wider text-amber-400">
+                  Deseja Adicionais? (Opcional)
+                </span>
+                <span className="text-[10px] text-zinc-400">Adicione ao seu gosto</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {AVAILABLE_ADDONS.map((addon) => {
+                  const isChecked = selectedAddons.some((a) => a.id === addon.id);
+                  return (
+                    <button
+                      key={addon.id}
+                      type="button"
+                      onClick={() => toggleAddon(addon)}
+                      className={`flex items-center justify-between p-2.5 rounded-xl border text-left text-xs transition-all ${
+                        isChecked
+                          ? 'bg-amber-500/15 border-amber-500 text-white'
+                          : 'bg-zinc-900/50 border-zinc-800/80 text-zinc-300 hover:border-zinc-700'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className={`w-4 h-4 rounded flex items-center justify-center border ${
+                          isChecked ? 'bg-amber-500 border-amber-500 text-zinc-950' : 'border-zinc-700'
+                        }`}>
+                          {isChecked && <Check className="w-3 h-3 stroke-[3]" />}
+                        </div>
+                        <span className="font-medium text-xs">{addon.name}</span>
+                      </div>
+                      <span className="font-bold text-amber-400">
+                        + R$ {addon.price.toFixed(2).replace('.', ',')}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+          {/* 4. Special Options if available */}
           {item.options && item.options.length > 0 && (
             <div className="space-y-4 pt-2 border-t border-zinc-800">
               {item.options.map((opt, idx) => (
@@ -154,14 +337,14 @@ export const ItemModal: React.FC<ItemModalProps> = ({
             </div>
           )}
 
-          {/* Special Notes / Observações */}
+          {/* 5. Special Notes / Observações */}
           <div className="space-y-2 pt-2 border-t border-zinc-800">
             <label className="text-xs font-bold uppercase tracking-wider text-zinc-300 block">
               Observações para a cozinha
             </label>
             <textarea
               rows={2}
-              placeholder="Ex: Tirar cebola, maionese à parte, bem passado..."
+              placeholder="Ex: Tirar cebola, maionese à parte, ponto da carne, caprichar no molho..."
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
               className="w-full p-3 bg-zinc-900/90 border border-zinc-800 rounded-xl text-zinc-200 text-xs focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 resize-none"
@@ -170,8 +353,8 @@ export const ItemModal: React.FC<ItemModalProps> = ({
         </div>
 
         {/* Footer: Quantity & Confirm Add */}
-        <div className="p-4 bg-zinc-950 border-t border-zinc-800 flex items-center gap-4">
-          <div className="flex items-center border border-zinc-800 rounded-xl bg-zinc-900 p-1">
+        <div className="p-4 bg-zinc-950 border-t border-zinc-800 flex items-center gap-3 sm:gap-4">
+          <div className="flex items-center border border-zinc-800 rounded-xl bg-zinc-900 p-1 shrink-0">
             <button
               onClick={() => setQuantity(Math.max(1, quantity - 1))}
               className="w-8 h-8 rounded-lg flex items-center justify-center text-zinc-400 hover:text-white hover:bg-zinc-800"
@@ -193,13 +376,13 @@ export const ItemModal: React.FC<ItemModalProps> = ({
 
           <button
             onClick={handleConfirm}
-            className="flex-1 flex items-center justify-between px-5 py-3.5 rounded-xl font-bold text-sm bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-zinc-950 shadow-lg shadow-amber-500/25 active:scale-95 transition-all"
+            className="flex-1 flex items-center justify-between px-4 sm:px-5 py-3.5 rounded-xl font-bold text-xs sm:text-sm bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-400 hover:to-orange-400 text-zinc-950 shadow-lg shadow-amber-500/25 active:scale-95 transition-all"
           >
-            <span className="flex items-center gap-2">
+            <span className="flex items-center gap-1.5 sm:gap-2">
               <ShoppingBag className="w-4 h-4 text-zinc-950" />
-              Adicionar ao Pedido
+              <span>Adicionar ao Pedido</span>
             </span>
-            <span className="font-display text-lg font-black">
+            <span className="font-display text-base sm:text-lg font-black">
               R$ {totalPrice.toFixed(2).replace('.', ',')}
             </span>
           </button>

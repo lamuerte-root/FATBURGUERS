@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { MenuItem, CategoryId, CartItem } from './types';
-import { MENU_ITEMS } from './data/menuData';
+import { MenuItem, CategoryId, CartItem, ProteinChoice, VariationChoice, ExtraAddon } from './types';
+import { MENU_ITEMS, STORE_INFO } from './data/menuData';
 import { Navbar } from './components/Navbar';
 import { Hero } from './components/Hero';
 import { CategoryBar } from './components/CategoryBar';
@@ -26,7 +26,7 @@ export default function App() {
   });
 
   const [isCartOpen, setIsCartOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState<CategoryId>('burgers');
+  const [activeCategory, setActiveCategory] = useState<CategoryId>('all');
   const [selectedItemModal, setSelectedItemModal] = useState<MenuItem | null>(null);
   const [appliedCoupon, setAppliedCoupon] = useState('FAT20');
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -60,14 +60,21 @@ export default function App() {
   };
 
   const handleAddToCart = (item: MenuItem) => {
-    // If item has customizable options, open modal for customization
-    if (item.options && item.options.length > 0) {
+    // If item has customizable options, proteins, variations, or extras, open modal for customization
+    if (
+      item.allowsProteins ||
+      item.hasVariations ||
+      item.allowsCustomization ||
+      (item.options && item.options.length > 0)
+    ) {
       setSelectedItemModal(item);
       return;
     }
 
     setCartItems((prev) => {
-      const existingIndex = prev.findIndex((ci) => ci.menuItem.id === item.id);
+      const existingIndex = prev.findIndex(
+        (ci) => ci.menuItem.id === item.id && !ci.selectedProtein && !ci.selectedVariation
+      );
       if (existingIndex > -1) {
         const updated = [...prev];
         updated[existingIndex].quantity += 1;
@@ -79,6 +86,7 @@ export default function App() {
           id: `${item.id}-${Date.now()}`,
           menuItem: item,
           quantity: 1,
+          unitPrice: item.price,
         },
       ];
     });
@@ -90,19 +98,28 @@ export default function App() {
     item: MenuItem,
     quantity: number,
     selectedOptions: Record<string, string>,
-    notes: string
+    notes: string,
+    selectedProtein?: ProteinChoice,
+    selectedVariation?: VariationChoice,
+    selectedAddons?: ExtraAddon[],
+    unitPrice?: number
   ) => {
+    const calculatedUnitPrice = unitPrice || item.price;
     setCartItems((prev) => [
       ...prev,
       {
-        id: `${item.id}-${Date.now()}`,
+        id: `${item.id}-${Date.now()}-${Math.random()}`,
         menuItem: item,
         quantity,
+        unitPrice: calculatedUnitPrice,
         selectedOptions,
         notes,
+        selectedProtein,
+        selectedVariation,
+        selectedAddons,
       },
     ]);
-    showToast(`✅ "${item.name}" personalizado e adicionado!`);
+    showToast(`✅ "${item.name}" personalizado e adicionado ao pedido!`);
   };
 
   const handleUpdateQuantity = (cartItemId: string, newQuantity: number) => {
@@ -140,18 +157,12 @@ export default function App() {
 
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0);
   const cartTotal = cartItems.reduce((acc, item) => {
-    let price = item.menuItem.price;
-    if (item.selectedOptions && item.menuItem.options) {
-      item.menuItem.options.forEach((opt) => {
-        const match = opt.choices.find((c) => c.label === item.selectedOptions?.[opt.name]);
-        if (match?.extraPrice) price += match.extraPrice;
-      });
-    }
+    const price = item.unitPrice || item.menuItem.price;
     return acc + price * item.quantity;
   }, 0);
 
   const bestsellers = MENU_ITEMS.filter((item) => item.isBestseller).slice(0, 4);
-  const desserts = MENU_ITEMS.filter((item) => item.category === 'doces');
+  const desserts = MENU_ITEMS.filter((item) => item.category === 'sobremesas');
 
   return (
     <div className="min-h-screen bg-[#0b0b0e] text-[#f4f4f5] flex flex-col font-sans selection:bg-amber-500 selection:text-zinc-950">
@@ -181,13 +192,13 @@ export default function App() {
           onExploreMenu={() => handleNavigate('menu')}
         />
 
-        {/* 2. Floating Category Bar matching reference dock */}
+        {/* 2. Floating Category Bar */}
         <CategoryBar
           activeCategory={activeCategory}
           onSelectCategory={handleCategorySelectFromBar}
         />
 
-        {/* 3. Bestsellers Section matching reference ("OUR BESTSELLERS") */}
+        {/* 3. Bestsellers Section ("OS MAIS VENDIDOS") */}
         <Bestsellers
           items={bestsellers}
           onAddToCart={handleAddToCart}
@@ -201,7 +212,7 @@ export default function App() {
           onSelectItem={(item) => setSelectedItemModal(item)}
         />
 
-        {/* 5. Delivery Promo Banner matching reference ("HUNGRY? We Deliver To You!") */}
+        {/* 5. Delivery Promo Banner */}
         <DeliveryPromoBanner
           onApplyCoupon={handleApplyCoupon}
           onOrderNow={() => {
@@ -210,7 +221,7 @@ export default function App() {
           }}
         />
 
-        {/* 6. Full Interactive Menu */}
+        {/* 6. Full Interactive Menu with all official categories */}
         <FullMenu
           items={MENU_ITEMS}
           selectedCategory={activeCategory}

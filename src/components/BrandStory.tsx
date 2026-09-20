@@ -1,6 +1,6 @@
 import React from 'react';
 import { Flame, Sparkles, UtensilsCrossed, ShieldCheck, Heart } from 'lucide-react';
-import logoImg from '../assets/images/fat_burguer_logo_1789944510522.jpg';
+import logoImg from '../assets/images/fat_burguer_logo_official.svg';
 
 export const BrandStory: React.FC = () => {
   const pillars = [
@@ -40,11 +40,11 @@ export const BrandStory: React.FC = () => {
             </div>
 
             <div className="flex justify-center lg:justify-start">
-              <div className="w-36 h-36 rounded-3xl p-1 bg-gradient-to-tr from-amber-500 via-orange-500 to-amber-300 shadow-2xl shadow-amber-500/20">
+              <div className="w-44 h-44 rounded-3xl p-3 bg-gradient-to-tr from-amber-500/20 via-orange-500/10 to-transparent border border-amber-500/30 shadow-2xl shadow-amber-500/20 flex items-center justify-center backdrop-blur-sm">
                 <img
                   src={logoImg}
-                  alt="FATBURGUERS Brand Badge"
-                  className="w-full h-full object-cover rounded-[22px] bg-zinc-950"
+                  alt="FATBURGUERS Logo Oficial"
+                  className="w-full h-full object-contain filter drop-shadow-xl"
                   referrerPolicy="no-referrer"
                 />
               </div>

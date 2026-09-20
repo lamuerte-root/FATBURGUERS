@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from 'react';
-import { Search, Plus, Sparkles, Filter, X } from 'lucide-react';
+import { Search, Plus, Filter, X } from 'lucide-react';
 import { MenuItem, CategoryId } from '../types';
 
 interface FullMenuProps {
@@ -35,11 +35,12 @@ export const FullMenu: React.FC<FullMenuProps> = ({
 
   const categories: { id: CategoryId; label: string; icon: string }[] = [
     { id: 'all', label: 'Todos os Itens', icon: '✨' },
-    { id: 'burgers', label: 'Hambúrgueres', icon: '🍔' },
-    { id: 'doces', label: 'Doces & Sobremesas', icon: '🍰' },
-    { id: 'acompanhamentos', label: 'Batatas & Porções', icon: '🍟' },
+    { id: 'classicos', label: 'Clássicos (Boi/Frango/Filé)', icon: '🍔' },
+    { id: 'especiais', label: 'Especiais da Casa', icon: '👑' },
+    { id: 'combos', label: 'Combos Fat', icon: '🔥' },
+    { id: 'sobremesas', label: 'Doces & Sobremesas', icon: '🍰' },
+    { id: 'acompanhamentos', label: 'Batatas & Salgados', icon: '🍟' },
     { id: 'bebidas', label: 'Bebidas Geladas', icon: '🥤' },
-    { id: 'combos', label: 'Combos Especiais', icon: '🍗' },
   ];
 
   return (
@@ -49,13 +50,13 @@ export const FullMenu: React.FC<FullMenuProps> = ({
         {/* Section Title */}
         <div className="text-center space-y-2 mb-10">
           <span className="font-script text-3xl sm:text-4xl text-amber-400 block">
-            — Escolha seu Prato Favorito —
+            — Cardápio Oficial FatBurguers —
           </span>
           <h2 className="font-display text-4xl sm:text-5xl md:text-6xl font-black text-white tracking-wide">
-            NOSSO CARDÁPIO COMPLETO
+            LANCHES, DOCES & PORÇÕES
           </h2>
-          <p className="text-zinc-400 text-sm max-w-lg mx-auto">
-            Ingredientes frescos e selecionados, feitos no capricho para a sua melhor experiência gastronômica.
+          <p className="text-zinc-400 text-sm max-w-xl mx-auto">
+            Escolha seu hambúrguer com carne de Boi, Frango ou Filé Mignon, adicione extras e finalize com os melhores doces artesanais da cidade!
           </p>
         </div>
 
@@ -70,7 +71,7 @@ export const FullMenu: React.FC<FullMenuProps> = ({
             <input
               id="input-menu-search"
               type="text"
-              placeholder="Buscar por hambúrguer, brownie, batata, cheddar..."
+              placeholder="Buscar por hambúrguer, copo da felicidade, batata, bolo vulcão..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-12 pr-10 py-3.5 bg-zinc-900/90 border border-zinc-700/80 focus:border-amber-500 rounded-2xl text-white placeholder-zinc-500 text-sm focus:outline-none focus:ring-2 focus:ring-amber-500/20 transition-all shadow-inner"
@@ -86,7 +87,7 @@ export const FullMenu: React.FC<FullMenuProps> = ({
           </div>
 
           {/* Category Tabs */}
-          <div className="flex items-center justify-center gap-2 overflow-x-auto pb-2 scrollbar-none px-2">
+          <div className="flex items-center justify-start sm:justify-center gap-2 overflow-x-auto pb-2 scrollbar-none px-2">
             {categories.map((cat) => {
               const active = selectedCategory === cat.id;
               return (
@@ -95,7 +96,7 @@ export const FullMenu: React.FC<FullMenuProps> = ({
                   onClick={() => onSelectCategory(cat.id)}
                   className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap transition-all duration-200 ${
                     active
-                      ? 'bg-amber-500 text-zinc-950 shadow-lg shadow-amber-500/20 scale-105'
+                      ? 'bg-amber-500 text-zinc-950 shadow-lg shadow-amber-500/20 scale-105 ring-1 ring-amber-400'
                       : 'bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-zinc-800 hover:border-zinc-700'
                   }`}
                 >
@@ -111,7 +112,7 @@ export const FullMenu: React.FC<FullMenuProps> = ({
         {/* Results Info */}
         <div className="flex items-center justify-between text-xs text-zinc-400 mb-6 px-1">
           <span>
-            Mostrando <strong>{filteredItems.length}</strong> itens deliciosos
+            Mostrando <strong>{filteredItems.length}</strong> itens disponíveis
           </span>
           {searchQuery && (
             <span className="text-amber-400">
@@ -149,17 +150,22 @@ export const FullMenu: React.FC<FullMenuProps> = ({
                   {/* Photo & badges */}
                   <div
                     onClick={() => onSelectItem(item)}
-                    className="relative aspect-[16/10] rounded-xl overflow-hidden mb-4 bg-zinc-900 cursor-pointer"
+                    className="relative aspect-[16/10] rounded-xl overflow-hidden mb-4 bg-zinc-900 cursor-pointer border border-zinc-800/50"
                   >
                     <img
                       src={item.image}
                       alt={item.name}
-                      className="w-full h-full object-cover transform group-hover:scale-106 transition-transform duration-500"
+                      className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500"
                       referrerPolicy="no-referrer"
                     />
                     {item.badge && (
                       <span className="absolute top-2.5 left-2.5 bg-amber-500 text-zinc-950 text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full shadow">
                         {item.badge}
+                      </span>
+                    )}
+                    {item.allowsProteins && (
+                      <span className="absolute bottom-2.5 left-2.5 bg-black/80 backdrop-blur-sm text-amber-300 text-[10px] font-bold px-2 py-0.5 rounded-md border border-amber-500/30">
+                        Boi • Frango • Filé
                       </span>
                     )}
                   </div>
@@ -193,7 +199,9 @@ export const FullMenu: React.FC<FullMenuProps> = ({
                 {/* Price and Add CTA */}
                 <div className="pt-3 border-t border-zinc-800 flex items-center justify-between">
                   <div>
-                    <span className="text-[11px] text-zinc-500 block leading-none mb-0.5">Preço</span>
+                    <span className="text-[11px] text-zinc-500 block leading-none mb-0.5">
+                      {item.allowsProteins ? 'A partir de' : item.hasVariations ? 'Opções a partir de' : 'Preço'}
+                    </span>
                     <span className="font-display text-2xl font-black text-amber-400">
                       R$ {item.price.toFixed(2).replace('.', ',')}
                     </span>
@@ -204,15 +212,21 @@ export const FullMenu: React.FC<FullMenuProps> = ({
                       onClick={() => onSelectItem(item)}
                       className="px-3 py-2 rounded-xl text-xs font-semibold text-zinc-300 bg-zinc-800 hover:bg-zinc-700 hover:text-white transition-colors"
                     >
-                      Detalhes
+                      Personalizar
                     </button>
                     <button
                       id={`btn-menu-add-${item.id}`}
-                      onClick={() => onAddToCart(item)}
+                      onClick={() => {
+                        if (item.allowsProteins || item.hasVariations || item.allowsCustomization) {
+                          onSelectItem(item);
+                        } else {
+                          onAddToCart(item);
+                        }
+                      }}
                       className="flex items-center gap-1.5 px-3.5 py-2 rounded-xl text-xs font-bold bg-amber-500 hover:bg-amber-400 text-zinc-950 shadow-md shadow-amber-500/20 active:scale-95 transition-all"
                     >
                       <Plus className="w-3.5 h-3.5 stroke-[3]" />
-                      <span>Adicionar</span>
+                      <span>{item.allowsProteins || item.hasVariations ? 'Escolher' : 'Adicionar'}</span>
                     </button>
                   </div>
                 </div>
