@@ -1,0 +1,6 @@
+{
+  "name": "FATBURGUERS | Hamburgueria Artesanal & Doces",
+  "description": "Site oficial da FATBURGUERS Delivery. Hambúrgueres artesanais suculentos, batatas crocantes e doces irresistíveis.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
